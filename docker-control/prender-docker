@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+echo "========================================"
+echo " Iniciando Docker Engine"
+echo "========================================"
+
+# Requiere privilegios administrativos.
+sudo systemctl start docker.service
+
+# Comprobar que Docker quedó activo.
+if systemctl is-active --quiet docker.service; then
+    echo
+    echo "[OK] Docker Engine está activo."
+    echo
+
+    # Mostrar información básica del Engine.
+    sudo docker info --format \
+        'Versión del servidor: {{.ServerVersion}}
+        Contenedores: {{.Containers}}
+        Contenedores activos: {{.ContainersRunning}}
+        Imágenes: {{.Images}}'
+else
+    echo
+    echo "[ERROR] Docker no quedó activo."
+    echo "Consulta los registros con:"
+    echo "sudo journalctl -u docker.service -b --no-pager"
+    exit 1
+fi

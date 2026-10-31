@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+echo "========================================"
+echo " Apagando el entorno Docker"
+echo "========================================"
+
+# Detener el daemon, el socket de activación y
+# el runtime de contenedores de esta instalación.
+sudo systemctl stop docker.service docker.socket containerd.service
+
+echo
+echo "[OK] Solicitud de apagado completada."
+echo
+echo "Estado de los servicios:"
+
+for service in docker.service docker.socket containerd.service; do
+    if systemctl is-active --quiet "$service"; then
+        printf "[ACTIVO]   %s\n" "$service"
+    else
+        printf "[INACTIVO] %s\n" "$service"
+    fi
+done
+
+echo
+echo "Las imágenes y los volúmenes no se han borrado."
